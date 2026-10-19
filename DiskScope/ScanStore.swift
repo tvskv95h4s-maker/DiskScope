@@ -61,6 +61,16 @@ final class ScanStore: ObservableObject {
         startScan(path: path, displayName: (path as NSString).lastPathComponent)
     }
 
+    /// "Start over": go back to the scan root, or start a fresh scan when
+    /// already there.
+    func restart() {
+        if breadcrumb.count > 1 {
+            go(to: 0)
+        } else {
+            rescan()
+        }
+    }
+
     func rescan() {
         guard let summary else { return }
         startScan(

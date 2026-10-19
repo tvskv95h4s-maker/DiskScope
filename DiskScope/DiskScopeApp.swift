@@ -22,6 +22,13 @@ struct DiskScopeApp: App {
                     store.chooseFolder()
                 }
                 .keyboardShortcut("o", modifiers: .command)
+
+                Divider()
+
+                Button("lens.restart") {
+                    store.restart()
+                }
+                .keyboardShortcut("r", modifiers: [.command, .shift])
             }
         }
     }

@@ -58,6 +58,26 @@ extension View {
     }
 }
 
+struct GlassCapsuleButtonStyle: ButtonStyle {
+    var horizontalPadding: CGFloat = 11
+    var verticalPadding: CGFloat = 6
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding(.horizontal, horizontalPadding)
+            .padding(.vertical, verticalPadding)
+            .background(
+                Capsule().fill(Color.white.opacity(configuration.isPressed ? 0.18 : 0.07))
+            )
+            .overlay(
+                Capsule().stroke(Theme.hairline, lineWidth: 1)
+            )
+            .scaleEffect(configuration.isPressed ? 0.96 : 1)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+            .contentShape(Capsule())
+    }
+}
+
 struct ViewSwitcher: View {
     @Binding var selection: Int
 

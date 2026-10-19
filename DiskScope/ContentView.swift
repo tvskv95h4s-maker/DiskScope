@@ -442,6 +442,10 @@ private struct ResultsView: View {
         entries.first { $0.id == selectedID }
     }
 
+    private var isAtRoot: Bool {
+        store.breadcrumb.count <= 1
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             topBar
@@ -475,22 +479,18 @@ private struct ResultsView: View {
             ZStack {
                 HStack {
                     Button {
-                        store.go(to: 0)
+                        store.restart()
                     } label: {
                         HStack(spacing: 6) {
-                            Image(systemName: "chevron.left")
+                            Image(systemName: isAtRoot ? "arrow.clockwise" : "chevron.left")
                                 .font(.system(size: 10, weight: .semibold))
                             Text("lens.restart")
                                 .font(.system(size: 11.5, weight: .medium))
                         }
                         .foregroundStyle(.white.opacity(0.9))
-                        .padding(.horizontal, 11)
-                        .padding(.vertical, 6)
-                        .background(Capsule().fill(Color.white.opacity(0.07)))
-                        .overlay(Capsule().stroke(Theme.hairline, lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
-                    .help(L10n.t("help.restart"))
+                    .buttonStyle(GlassCapsuleButtonStyle())
+                    .help(isAtRoot ? L10n.t("help.rescan") : L10n.t("help.restart"))
 
                     Spacer()
 
@@ -511,10 +511,11 @@ private struct ResultsView: View {
                 Text("lens.title")
                     .font(.system(size: 11.5, weight: .semibold))
                     .foregroundStyle(Theme.secondary)
+                    .allowsHitTesting(false)
             }
             .padding(.horizontal, 24)
-            .padding(.top, 28)
-            .frame(height: 56)
+            .padding(.top, 30)
+            .frame(height: 58)
 
             HStack(spacing: 9) {
                 Button {

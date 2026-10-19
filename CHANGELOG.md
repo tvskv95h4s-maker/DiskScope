@@ -12,4 +12,5 @@ Initial public release.
 - Allocated-size accounting, hard-link deduplication and mount-point skipping
 - Full Disk Access detection and guidance
 - English, Simplified Chinese and Traditional Chinese localization
+- "Start over" returns to the top level, or starts a fresh scan when already there
 - DMG packaging script, GitHub Actions build and MIT license
