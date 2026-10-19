@@ -13,4 +13,6 @@ Initial public release.
 - Full Disk Access detection and guidance
 - English, Simplified Chinese and Traditional Chinese localization
 - "Start over" returns to the top level, or starts a fresh scan when already there
+- Universal binary (arm64 + x86_64) for Apple Silicon and Intel Macs
+- DMG opens with a drag-to-Applications guide window
 - DMG packaging script, GitHub Actions build and MIT license

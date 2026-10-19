@@ -26,14 +26,16 @@ DiskScope 是一个用 SwiftUI + `getattrlistbulk(2)` 编写的原生 macOS 磁�
 ## 环境要求
 
 - macOS 14.0 或更高版本
-- Apple Silicon / Intel Mac
+- Apple Silicon / Intel Mac，App 为通用二进制
 - 从源码构建需要 Xcode 15.4+
 
 ## 安装
 
 1. 从 [Releases](../../releases/latest) 下载最新的 `DiskScope-<version>.dmg`。
-2. 打开 DMG，把 **DiskScope** 拖进 **Applications**。
+2. 打开 DMG 会出现引导窗口：左侧是 App，右侧是 Applications 文件夹，把 **DiskScope** 拖到 **Applications** 上。
 3. 启动 DiskScope，按提示授予完全磁盘访问权限。
+
+![DMG 引导窗口](docs/dmg-guide.png)
 
 > **关于公证：** 发布包使用本地开发证书签名，未经过 Apple 公证。如果首次启动被 Gatekeeper 拦截，请右键点击 App 选择“打开”，或执行
 > `xattr -dr com.apple.quarantine /Applications/DiskScope.app`。

@@ -13,6 +13,10 @@ update `CHANGELOG.md`.
 # -> dist/DiskScope-<version>.dmg
 ```
 
+The packaging script uses Finder AppleScript to arrange the DMG window
+(background, icon positions). macOS will ask for Automation permission the first
+time — allow it, otherwise the DMG is created without the guide layout.
+
 Verify the DMG:
 
 ```bash

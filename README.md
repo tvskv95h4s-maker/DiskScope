@@ -39,15 +39,18 @@ Space Lens, and search a ranked list of the largest files.
 ## Requirements
 
 - macOS 14.0 or later
-- Apple Silicon or Intel Mac
+- Apple Silicon or Intel Mac — the app ships as a universal binary
 - Xcode 15.4+ to build from source
 
 ## Install
 
 1. Download the latest `DiskScope-<version>.dmg` from
    [Releases](../../releases/latest).
-2. Open the DMG and drag **DiskScope** into **Applications**.
+2. Open the DMG. A guide window opens with the app on the left and the
+   Applications folder on the right — drag **DiskScope** onto **Applications**.
 3. Launch DiskScope and grant Full Disk Access when prompted.
+
+![DMG installer window](docs/dmg-guide.png)
 
 > **Notarization:** release builds are signed for local development but are not
 > notarized by Apple. If Gatekeeper blocks the first launch, right-click the app
