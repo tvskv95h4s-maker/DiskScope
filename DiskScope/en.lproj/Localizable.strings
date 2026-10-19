@@ -1,0 +1,108 @@
+/* General */
+"app.tagline" = "See where every gigabyte goes.";
+
+/* Actions */
+"action.scanDisk" = "Scan Disk";
+"action.scan" = "Scan";
+"action.chooseFolder" = "Choose Folder…";
+"action.chooseFolderShort" = "Choose Folder";
+"action.rescan" = "Rescan";
+"action.stop" = "Stop";
+"action.stopScan" = "Stop Scanning";
+"action.openSettings" = "Open Settings";
+"action.reveal" = "Show in Finder";
+"action.open" = "Open";
+"action.grant" = "Grant Access";
+
+/* Help tags */
+"help.scanDisk" = "Scan the macOS data volume";
+"help.chooseFolder" = "Analyze a single folder (⌘O)";
+"help.rescan" = "Scan the current scope again";
+"help.stop" = "Stop the current scan";
+"help.up" = "Up one level";
+"help.reveal" = "Show in Finder";
+"help.scanTotal" = "Excludes the read-only system volume and APFS snapshots. APFS clones may be counted twice.";
+
+/* Welcome */
+"welcome.privacy" = "A first scan of ~2 million files takes 1–2 minutes. Everything runs locally — no data is uploaded.";
+"welcome.permission.title" = "Full Disk Access is recommended";
+"welcome.permission.message" = "Without it, Mail, Photos and other protected folders are skipped, and scanning is slower.";
+
+/* Panels */
+"panel.message" = "Choose the folder whose disk usage you want to analyze";
+
+/* Scanning */
+"scan.title" = "Scanning %@";
+"scan.elapsed" = "Elapsed %@";
+"scan.total" = "Scanned %@";
+
+/* Tabs and columns */
+"tab.directory" = "Directories";
+"tab.bigFiles" = "Large Files";
+"column.name" = "Name";
+"column.size" = "Size";
+"column.share" = "Share";
+
+/* Directory browser */
+"dir.empty.title" = "Nothing to show here";
+"dir.empty.message" = "This folder is empty, or it only contains unreadable items.";
+"dir.denied.title" = "No permission to read this folder";
+"dir.denied.message" = "Grant Full Disk Access in System Settings, then scan again.";
+"dir.smallerFile" = "%@ smaller file";
+"dir.smallerFiles" = "%@ smaller files";
+"dir.remainingFolder" = "%@ more folder";
+"dir.remainingFolders" = "%@ more folders";
+"dir.belowOneMB" = "Below 1 MB, grouped";
+"dir.notShown" = "Not shown after sorting by size";
+
+/* Counted nouns */
+"count.file" = "%@ file";
+"count.files" = "%@ files";
+"count.folder" = "%@ folder";
+"count.folders" = "%@ folders";
+"count.item" = "%@ item";
+"count.items" = "%@ items";
+"count.directory" = "%@ directory";
+"count.directories" = "%@ directories";
+"count.mountPoint" = "%@ mount point skipped";
+"count.mountPoints" = "%@ mount points skipped";
+
+/* Composed summaries */
+"format.filesFolders" = "%@ · %@";
+"format.summary" = "%@ · %@ · %@";
+
+/* Large files */
+"big.search" = "Search name or path";
+"big.minSize" = "Minimum size";
+"big.sortDesc" = "Largest first";
+"big.sortAsc" = "Smallest first";
+"big.summary" = "%@ · %@";
+"big.empty.title" = "No large files match";
+"big.empty.message" = "Try a lower size threshold or clear the search.";
+
+/* Capacity */
+"capacity.usage" = "Used %@ · Available %@ · Total %@";
+
+/* Permissions */
+"permission.title.granted" = "%@ unreadable folders — totals may be slightly low";
+"permission.title.denied" = "Full Disk Access is not granted — some folders are skipped";
+"permission.message" = "Mail, Messages, Safari and Photos are protected by macOS. Grant access and rescan for more accurate results.";
+
+/* Status bar */
+"status.scanning" = "Scanning · %@ · %@";
+"status.duration" = "Elapsed %@";
+"status.cancelled" = "Cancelled — showing partial results";
+"status.ready" = "Ready";
+"status.deniedAccess" = "%@ folders need permission";
+"status.deniedSystem" = "%@ system folders unreadable";
+"status.deniedSystem.help" = "These folders are usually protected by macOS (for example .fseventsd or .Spotlight-V100) and stay unreadable even with Full Disk Access.";
+"status.deniedAccess.help" = "Grant Full Disk Access to read more folders.";
+
+/* Formatting */
+"duration.seconds" = "%.1f s";
+"duration.minutes" = "%ld min %ld s";
+"file.type" = "File";
+
+/* Menu */
+"menu.scanDisk" = "Scan Disk";
+"menu.chooseFolder" = "Choose Folder…";

@@ -1,0 +1,38 @@
+DiskScope
+=========
+
+1. Drag DiskScope.app into the Applications folder.
+2. Open DiskScope from Applications.
+3. Grant Full Disk Access when asked:
+   System Settings > Privacy & Security > Full Disk Access.
+   Without it, Mail, Photos and other protected folders are skipped.
+4. Click "Scan Disk".
+
+DiskScope is read-only. It never deletes or modifies files, and it never
+uploads data.
+
+This build is signed for local development but is not notarized by Apple.
+If macOS blocks the first launch:
+
+  - Right-click DiskScope.app, choose Open, then confirm, or
+  - run: xattr -dr com.apple.quarantine /Applications/DiskScope.app
+
+You can also build from source — see README.md in the repository.
+
+中文说明
+========
+
+1. 将 DiskScope.app 拖入“应用程序”文件夹。
+2. 从“应用程序”启动 DiskScope。
+3. 按提示授予“完全磁盘访问权限”：
+   系统设置 → 隐私与安全性 → 完全磁盘访问权限。
+   未授权时 Mail、照片等受保护目录会被跳过。
+4. 点击“扫描整盘”。
+
+DiskScope 是只读工具，不会删除或修改任何文件，也不会上传数据。
+
+本构建使用本地开发证书签名，未经过 Apple 公证。如果首次启动被系统拦截：
+  - 右键点击 DiskScope.app，选择“打开”，再确认；或
+  - 执行：xattr -dr com.apple.quarantine /Applications/DiskScope.app
+
+也可以从源码构建，详见仓库中的 README.zh-CN.md。

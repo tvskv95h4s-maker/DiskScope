@@ -1,0 +1,108 @@
+/* General */
+"app.tagline" = "看清每一個 GB 的去向";
+
+/* Actions */
+"action.scanDisk" = "掃描整顆磁碟";
+"action.scan" = "掃描";
+"action.chooseFolder" = "選擇資料夾…";
+"action.chooseFolderShort" = "選擇資料夾";
+"action.rescan" = "重新掃描";
+"action.stop" = "停止";
+"action.stopScan" = "停止掃描";
+"action.openSettings" = "開啟權限設定";
+"action.reveal" = "在 Finder 中顯示";
+"action.open" = "開啟";
+"action.grant" = "前往授權";
+
+/* Help tags */
+"help.scanDisk" = "掃描 macOS 資料卷";
+"help.chooseFolder" = "只分析指定資料夾（⌘O）";
+"help.rescan" = "重新掃描目前範圍";
+"help.stop" = "停止目前的掃描";
+"help.up" = "上一層";
+"help.reveal" = "在 Finder 中顯示";
+"help.scanTotal" = "不包含唯讀系統卷與 APFS 快照；APFS 複製可能導致輕微重複計算。";
+
+/* Welcome */
+"welcome.privacy" = "首次掃描 200 萬級檔案約需 1–2 分鐘；全部在本機完成，不會上傳任何資料。";
+"welcome.permission.title" = "建議先授予「完全磁碟存取權」";
+"welcome.permission.message" = "否則 Mail、照片等資料夾會被略過，掃描也會明顯變慢。";
+
+/* Panels */
+"panel.message" = "選擇要分析佔用的資料夾";
+
+/* Scanning */
+"scan.title" = "正在掃描 %@";
+"scan.elapsed" = "已耗時 %@";
+"scan.total" = "本次掃描 %@";
+
+/* Tabs and columns */
+"tab.directory" = "目錄";
+"tab.bigFiles" = "大型檔案";
+"column.name" = "名稱";
+"column.size" = "大小";
+"column.share" = "佔比";
+
+/* Directory browser */
+"dir.empty.title" = "這裡沒有可顯示的內容";
+"dir.empty.message" = "目錄為空，或其中只有無法讀取的項目。";
+"dir.denied.title" = "沒有權限讀取這個資料夾";
+"dir.denied.message" = "請在系統設定中授予「完全磁碟存取權」後重新掃描。";
+"dir.smallerFile" = "%@ 個較小的檔案";
+"dir.smallerFiles" = "%@ 個較小的檔案";
+"dir.remainingFolder" = "其餘 %@ 個資料夾";
+"dir.remainingFolders" = "其餘 %@ 個資料夾";
+"dir.belowOneMB" = "小於 1 MB，未單獨列出";
+"dir.notShown" = "依大小排序後未顯示";
+
+/* Counted nouns */
+"count.file" = "%@ 個檔案";
+"count.files" = "%@ 個檔案";
+"count.folder" = "%@ 個資料夾";
+"count.folders" = "%@ 個資料夾";
+"count.item" = "%@ 個項目";
+"count.items" = "%@ 個項目";
+"count.directory" = "%@ 個目錄";
+"count.directories" = "%@ 個目錄";
+"count.mountPoint" = "略過 %@ 個掛載點";
+"count.mountPoints" = "略過 %@ 個掛載點";
+
+/* Composed summaries */
+"format.filesFolders" = "%@ · %@";
+"format.summary" = "%@ · %@ · %@";
+
+/* Large files */
+"big.search" = "搜尋檔名或路徑";
+"big.minSize" = "最小";
+"big.sortDesc" = "由大到小";
+"big.sortAsc" = "由小到大";
+"big.summary" = "%@ · %@";
+"big.empty.title" = "沒有符合條件的大型檔案";
+"big.empty.message" = "試著降低大小門檻，或清除搜尋關鍵字。";
+
+/* Capacity */
+"capacity.usage" = "已用 %@ · 可用 %@ · 共 %@";
+
+/* Permissions */
+"permission.title.granted" = "有 %@ 個目錄無法讀取，統計結果可能偏低";
+"permission.title.denied" = "未授予「完全磁碟存取權」，部分目錄無法統計";
+"permission.message" = "Mail、訊息、Safari、照片等受保護目錄會被略過。授權後重新掃描，結果更接近磁碟實際佔用。";
+
+/* Status bar */
+"status.scanning" = "正在掃描 · %@ · %@";
+"status.duration" = "耗時 %@";
+"status.cancelled" = "已取消，目前顯示的是部分掃描結果";
+"status.ready" = "準備就緒";
+"status.deniedAccess" = "%@ 個目錄無權限";
+"status.deniedSystem" = "%@ 個系統目錄無法讀取";
+"status.deniedSystem.help" = "這些目錄通常由系統保護，例如 .fseventsd、.Spotlight-V100，屬於正常現象。";
+"status.deniedAccess.help" = "授予「完全磁碟存取權」後可以讀取更多目錄。";
+
+/* Formatting */
+"duration.seconds" = "%.1f 秒";
+"duration.minutes" = "%ld 分 %ld 秒";
+"file.type" = "檔案";
+
+/* Menu */
+"menu.scanDisk" = "掃描整顆磁碟";
+"menu.chooseFolder" = "選擇資料夾…";
