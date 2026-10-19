@@ -25,6 +25,14 @@ if [[ ! -d "$APP" ]]; then
   exit 1
 fi
 
+# Optional Developer ID signing for notarized releases:
+#   SIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)" ./scripts/package.sh
+if [[ -n "${SIGN_IDENTITY:-}" ]]; then
+  echo "==> Signing with $SIGN_IDENTITY"
+  codesign --force --deep --options runtime --timestamp \
+    --sign "$SIGN_IDENTITY" "$APP"
+fi
+
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist")"
 STAGE="$BUILD_DIR/dmg-stage"
 DMG="$ROOT/dist/DiskScope-$VERSION.dmg"
@@ -57,6 +65,10 @@ fi
 
 hdiutil convert "$RW" -format UDZO -o "$DMG" -ov >/dev/null
 rm -f "$RW"
+
+if [[ -n "${SIGN_IDENTITY:-}" ]]; then
+  codesign --force --timestamp --sign "$SIGN_IDENTITY" "$DMG"
+fi
 
 echo "==> Done"
 echo "$DMG"
