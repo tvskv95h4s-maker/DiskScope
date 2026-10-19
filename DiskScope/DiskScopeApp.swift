@@ -9,7 +9,8 @@ struct DiskScopeApp: App {
             ContentView()
                 .environmentObject(store)
         }
-        .defaultSize(width: 1120, height: 740)
+        .defaultSize(width: 1180, height: 760)
+        .windowStyle(.hiddenTitleBar)
         .commands {
             CommandGroup(after: .newItem) {
                 Button("menu.scanDisk") {

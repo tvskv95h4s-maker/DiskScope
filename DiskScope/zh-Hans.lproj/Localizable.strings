@@ -103,6 +103,31 @@
 "duration.minutes" = "%ld 分 %ld 秒";
 "file.type" = "文件";
 
+
+/* Space lens */
+"welcome.heroTitle" = "看清每一块空间";
+"welcome.heroSubtitle" = "用可视化方式比较文件夹和文件大小，几秒钟找到最占空间的内容。";
+"welcome.feature1.title" = "即时尺寸概览";
+"welcome.feature1.message" = "目录和文件按实际占用绘制，面积越大越占空间。";
+"welcome.feature2.title" = "逐层下钻";
+"welcome.feature2.message" = "点开任意文件夹继续查看，直到找到真正的大文件。";
+"welcome.permission.short" = "开启完全磁盘访问权限";
+"volume.used" = "已用 %@";
+"lens.title" = "空间透镜";
+"lens.restart" = "重新开始";
+"lens.open" = "打开";
+"lens.reveal" = "显示";
+"lens.select" = "选择";
+"lens.showingTop" = "显示最大的 %@ 项";
+"lens.noItems" = "这里没有可显示的内容";
+"scan.building" = "正在构建存储图…";
+"help.back" = "返回上一级";
+"help.restart" = "回到顶层";
+"tab.lens" = "空间透镜";
+
+"welcome.sourceTitle" = "选择扫描范围";
+"action.cancel" = "取消";
+
 /* Menu */
 "menu.scanDisk" = "扫描整盘";
 "menu.chooseFolder" = "选择文件夹…";

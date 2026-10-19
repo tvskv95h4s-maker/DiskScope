@@ -22,6 +22,7 @@ final class ScanStore: ObservableObject {
     @Published var statusMessage: String?
     @Published var lastScanTitle = ""
     @Published var scanStartedAt: Date?
+    @Published var scanIsFullDisk = false
 
     private var engine: ScanEngine?
     private var progressTimer: DispatchSourceTimer?
@@ -78,6 +79,7 @@ final class ScanStore: ObservableObject {
 
         phase = .scanning
         scanStartedAt = Date()
+        scanIsFullDisk = (path == "/System/Volumes/Data")
         live = LiveProgress()
         live.currentPath = path
         root = nil

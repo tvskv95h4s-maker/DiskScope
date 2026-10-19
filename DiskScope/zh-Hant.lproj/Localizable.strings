@@ -103,6 +103,31 @@
 "duration.minutes" = "%ld 分 %ld 秒";
 "file.type" = "檔案";
 
+
+/* Space lens */
+"welcome.heroTitle" = "看清每一塊空間";
+"welcome.heroSubtitle" = "用視覺化方式比較資料夾和檔案大小，幾秒鐘找到最佔空間的內容。";
+"welcome.feature1.title" = "即時尺寸概覽";
+"welcome.feature1.message" = "目錄和檔案依實際佔用繪製，面積越大越佔空間。";
+"welcome.feature2.title" = "逐層下鑽";
+"welcome.feature2.message" = "點開任意資料夾繼續檢視，直到找到真正的大型檔案。";
+"welcome.permission.short" = "開啟「完全磁碟存取權」";
+"volume.used" = "已用 %@";
+"lens.title" = "空間透鏡";
+"lens.restart" = "重新開始";
+"lens.open" = "開啟";
+"lens.reveal" = "顯示";
+"lens.select" = "選擇";
+"lens.showingTop" = "顯示最大的 %@ 項";
+"lens.noItems" = "這裡沒有可顯示的內容";
+"scan.building" = "正在建構儲存空間圖…";
+"help.back" = "返回上一層";
+"help.restart" = "回到最上層";
+"tab.lens" = "空間透鏡";
+
+"welcome.sourceTitle" = "選擇掃描範圍";
+"action.cancel" = "取消";
+
 /* Menu */
 "menu.scanDisk" = "掃描整顆磁碟";
 "menu.chooseFolder" = "選擇資料夾…";

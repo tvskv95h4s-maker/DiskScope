@@ -6,7 +6,8 @@ Initial public release.
 
 - Native SwiftUI disk usage analyzer built on `getattrlistbulk(2)`
 - Whole-volume and single-folder scans with eight concurrent workers
-- Ranked directory browser with breadcrumb navigation and share bars
+- Space Lens: circle-packed visualization with a synchronized ranked list
+- Redesigned welcome, scanning and results screens with a full-window gradient
 - Large-file finder with size filters, name/path search and Finder reveal
 - Allocated-size accounting, hard-link deduplication and mount-point skipping
 - Full Disk Access detection and guidance

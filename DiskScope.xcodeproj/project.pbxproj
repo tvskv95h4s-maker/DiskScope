@@ -17,6 +17,8 @@
 		C10000000000000000000008 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000008 /* Assets.xcassets */; };
 		C10000000000000000000009 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000009 /* L10n.swift */; };
 		C10000000000000000000010 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000010 /* Localizable.strings */; };
+		C10000000000000000000011 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000014 /* Theme.swift */; };
+		C10000000000000000000012 /* LensView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000015 /* LensView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +34,8 @@
 		B10000000000000000000011 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B10000000000000000000012 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		B10000000000000000000013 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		B10000000000000000000014 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		B10000000000000000000015 /* LensView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LensView.swift; sourceTree = "<group>"; };
 		A10000000000000000000006 /* DiskScope.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DiskScope.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -75,6 +79,8 @@
 				B10000000000000000000008 /* Assets.xcassets */,
 				B10000000000000000000009 /* L10n.swift */,
 				B10000000000000000000010 /* Localizable.strings */,
+				B10000000000000000000014 /* Theme.swift */,
+				B10000000000000000000015 /* LensView.swift */,
 			);
 			path = DiskScope;
 			sourceTree = "<group>";
@@ -159,6 +165,8 @@
 				C10000000000000000000006 /* BigFilesView.swift in Sources */,
 				C10000000000000000000007 /* Components.swift in Sources */,
 				C10000000000000000000009 /* L10n.swift in Sources */,
+				C10000000000000000000011 /* Theme.swift in Sources */,
+				C10000000000000000000012 /* LensView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,8 +7,8 @@
 **See where every gigabyte goes.**
 
 DiskScope is a fast, native macOS disk usage analyzer built with SwiftUI and
-`getattrlistbulk(2)`. Scan a whole volume or a single folder, then drill into a
-ranked directory tree and a searchable list of the largest files.
+`getattrlistbulk(2)`. Scan a whole volume or a single folder, explore a circle-packed
+Space Lens, and search a ranked list of the largest files.
 
 [简体中文](README.zh-CN.md)
 
@@ -16,7 +16,7 @@ ranked directory tree and a searchable list of the largest files.
 ![Swift](https://img.shields.io/badge/Swift-5.10-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-![DiskScope directory ranking](docs/en-home.png)
+![DiskScope Space Lens](docs/en-home.png)
 
 ![DiskScope large file finder](docs/en-bigfiles.png)
 
@@ -24,8 +24,9 @@ ranked directory tree and a searchable list of the largest files.
 
 - **Whole disk or one folder** — scan the macOS data volume, or point DiskScope
   at a single directory.
-- **Ranked directories** — sorted by on-disk size, with share-of-total bars,
-  breadcrumb navigation and one-click drill-down.
+- **Space Lens** — folders and files are packed into a circle by size, with a
+  ranked list beside it. Select a circle or row to inspect it, then double-click
+  or press Open to drill down. Breadcrumbs keep the path visible.
 - **Large file finder** — filter by ≥10 MB / ≥100 MB / ≥500 MB / ≥1 GB, search by
   name or path, and reveal any file in Finder.
 - **Honest accounting** — uses allocated size instead of logical size, dedupes

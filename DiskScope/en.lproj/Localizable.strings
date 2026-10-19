@@ -103,6 +103,31 @@
 "duration.minutes" = "%ld min %ld s";
 "file.type" = "File";
 
+
+/* Space lens */
+"welcome.heroTitle" = "See every byte, clearly.";
+"welcome.heroSubtitle" = "Compare folders and files visually, and find what takes space in seconds.";
+"welcome.feature1.title" = "Instant size overview";
+"welcome.feature1.message" = "Folders and files are drawn to scale — bigger area means more space.";
+"welcome.feature2.title" = "Drill down without guessing";
+"welcome.feature2.message" = "Open any folder to keep exploring until you find the real space hogs.";
+"welcome.permission.short" = "Enable Full Disk Access";
+"volume.used" = "Used %@";
+"lens.title" = "Space Lens";
+"lens.restart" = "Start over";
+"lens.open" = "Open";
+"lens.reveal" = "Reveal";
+"lens.select" = "Select";
+"lens.showingTop" = "Showing the %@ largest items";
+"lens.noItems" = "Nothing to show here";
+"scan.building" = "Building your storage map…";
+"help.back" = "Go up one level";
+"help.restart" = "Back to the top level";
+"tab.lens" = "Space Lens";
+
+"welcome.sourceTitle" = "Choose scan source";
+"action.cancel" = "Cancel";
+
 /* Menu */
 "menu.scanDisk" = "Scan Disk";
 "menu.chooseFolder" = "Choose Folder…";

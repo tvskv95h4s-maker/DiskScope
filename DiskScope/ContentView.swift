@@ -5,9 +5,8 @@ struct ContentView: View {
     @EnvironmentObject private var store: ScanStore
 
     var body: some View {
-        VStack(spacing: 0) {
-            CapacityBar(volume: store.volume)
-            Divider()
+        ZStack {
+            AppBackground()
 
             Group {
                 switch store.phase {
@@ -19,51 +18,15 @@ struct ContentView: View {
                     ResultsView()
                 }
             }
-
-            StatusBar(
-                summary: store.summary,
-                live: store.live,
-                isScanning: store.phase == .scanning,
-                statusMessage: store.statusMessage,
-                hasFullDiskAccess: store.hasFullDiskAccess
-            )
         }
-        .frame(minWidth: 980, minHeight: 620)
-        .background(Color(nsColor: .windowBackgroundColor))
+        .frame(minWidth: 1000, minHeight: 680)
+        .preferredColorScheme(.dark)
         .onAppear {
             let arguments = ProcessInfo.processInfo.arguments
             if let index = arguments.firstIndex(of: "--scan-path"), index + 1 < arguments.count {
-                let path = arguments[index + 1]
-                store.startScanForTesting(path: path)
+                store.startScanForTesting(path: arguments[index + 1])
             } else if arguments.contains("--autoscan"), store.phase == .idle {
                 store.scanFullDisk()
-            }
-        }
-        .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-                Button {
-                    store.rescan()
-                } label: {
-                    Label("action.rescan", systemImage: "arrow.clockwise")
-                }
-                .disabled(store.summary == nil)
-                .help(L10n.t("help.rescan"))
-
-                Button {
-                    store.chooseFolder()
-                } label: {
-                    Label("action.chooseFolderShort", systemImage: "folder")
-                }
-                .help(L10n.t("help.chooseFolder"))
-
-                if store.phase == .scanning {
-                    Button {
-                        store.cancel()
-                    } label: {
-                        Label("action.stop", systemImage: "stop.circle")
-                    }
-                    .help(L10n.t("help.stop"))
-                }
             }
         }
     }
@@ -73,78 +36,270 @@ struct ContentView: View {
 
 private struct WelcomeView: View {
     @EnvironmentObject private var store: ScanStore
+    @State private var scanHover = false
+    @State private var showSourceDialog = false
 
     var body: some View {
-        VStack(spacing: 22) {
-            Spacer()
+        GeometryReader { geo in
+            let leftWidth = min(430, geo.size.width * 0.43)
+            let heroSide = min(geo.size.height * 0.52, geo.size.width * 0.33)
+
+            ZStack(alignment: .bottom) {
+                HStack(alignment: .center, spacing: 24) {
+                    leftColumn
+                        .frame(width: leftWidth, alignment: .leading)
+
+                    Spacer(minLength: 16)
+
+                    if geo.size.width > 980 {
+                        hero(side: heroSide)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
+                }
+                .padding(.leading, 56)
+                .padding(.trailing, 48)
+                .padding(.top, 46)
+                .padding(.bottom, 118)
+
+                scanButton
+                    .padding(.bottom, 36)
+            }
+        }
+    }
+
+    private var leftColumn: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 10) {
+                Image(nsImage: NSApplication.shared.applicationIconImage)
+                    .resizable()
+                    .interpolation(.high)
+                    .frame(width: 28, height: 28)
+                Text(verbatim: "DiskScope")
+                    .font(.system(size: 15, weight: .semibold))
+                    .tracking(0.4)
+            }
+
+            Spacer().frame(height: 56)
+
+            VStack(alignment: .leading, spacing: 10) {
+                Text("welcome.heroTitle")
+                    .font(.system(size: 38, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text("welcome.heroSubtitle")
+                    .font(.system(size: 13.5))
+                    .foregroundStyle(Theme.secondary)
+                    .lineSpacing(3)
+                    .frame(maxWidth: 380, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer().frame(height: 34)
+
+            VStack(alignment: .leading, spacing: 20) {
+                feature(
+                    icon: "circle.grid.cross",
+                    title: "welcome.feature1.title",
+                    message: "welcome.feature1.message"
+                )
+                feature(
+                    icon: "arrow.down.right.and.arrow.up.left",
+                    title: "welcome.feature2.title",
+                    message: "welcome.feature2.message"
+                )
+            }
+
+            Spacer().frame(height: 48)
+
+            if !store.hasFullDiskAccess {
+                Button {
+                    store.openFullDiskAccessSettings()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "lock.shield")
+                        Text("welcome.permission.short")
+                        Image(systemName: "arrow.up.right")
+                            .font(.system(size: 9, weight: .bold))
+                    }
+                    .font(.system(size: 10.5, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.9))
+                    .padding(.horizontal, 11)
+                    .padding(.vertical, 7)
+                    .background(Capsule().fill(Color.orange.opacity(0.18)))
+                    .overlay(Capsule().stroke(Color.orange.opacity(0.35), lineWidth: 1))
+                }
+                .buttonStyle(.plain)
+                .padding(.bottom, 12)
+            }
+
+            volumeCard
+
+            Spacer(minLength: 0)
+        }
+    }
+
+    private func feature(icon: String, title: LocalizedStringKey, message: LocalizedStringKey) -> some View {
+        HStack(alignment: .top, spacing: 14) {
+            Image(systemName: icon)
+                .font(.system(size: 19, weight: .light))
+                .foregroundStyle(Color.white.opacity(0.85))
+                .frame(width: 28, height: 28)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.system(size: 12.5, weight: .semibold))
+                    .foregroundStyle(.white)
+                Text(message)
+                    .font(.system(size: 11))
+                    .foregroundStyle(Theme.secondary)
+                    .lineSpacing(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    private var volumeCard: some View {
+        Button {
+            showSourceDialog = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "internaldrive.fill")
+                    .font(.system(size: 24, weight: .light))
+                    .foregroundStyle(.white.opacity(0.9))
+                    .frame(width: 34)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(alignment: .firstTextBaseline) {
+                        Text(verbatim: "Macintosh HD")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(.white)
+                        Spacer(minLength: 8)
+                        if let volume = store.volume {
+                            Text(Fmt.bytes(volume.totalBytes))
+                                .font(.system(size: 10.5))
+                                .foregroundStyle(Theme.secondary)
+                        }
+                    }
+
+                    if let volume = store.volume {
+                        GeometryReader { proxy in
+                            ZStack(alignment: .leading) {
+                                Capsule().fill(Color.white.opacity(0.12))
+                                Capsule()
+                                    .fill(Color.white.opacity(0.85))
+                                    .frame(
+                                        width: max(
+                                            2,
+                                            proxy.size.width * min(
+                                                max(Double(volume.usedBytes) / Double(max(volume.totalBytes, 1)), 0),
+                                                1
+                                            )
+                                        )
+                                    )
+                            }
+                        }
+                        .frame(height: 4)
+
+                        Text(L10n.format("volume.used", Fmt.bytes(volume.usedBytes)))
+                            .font(.system(size: 9.5))
+                            .foregroundStyle(Theme.tertiary)
+                    }
+                }
+
+                Image(systemName: "chevron.up.chevron.down")
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundStyle(Theme.tertiary)
+            }
+            .padding(.horizontal, 13)
+            .padding(.vertical, 11)
+            .frame(width: 320)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(Theme.hairline, lineWidth: 1)
+            )
+            .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .confirmationDialog(
+            L10n.t("welcome.sourceTitle"),
+            isPresented: $showSourceDialog,
+            titleVisibility: .hidden
+        ) {
+            Button("action.scanDisk") { store.scanFullDisk() }
+            Button("action.chooseFolder") { store.chooseFolder() }
+            Button("action.cancel", role: .cancel) {}
+        }
+    }
+
+    private func hero(side: CGFloat) -> some View {
+        ZStack {
+            Circle()
+                .fill(
+                    RadialGradient(
+                        colors: [Theme.accent.opacity(0.28), .clear],
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: side * 0.7
+                    )
+                )
+                .frame(width: side * 1.24, height: side * 1.24)
+
+            Circle()
+                .stroke(Color.white.opacity(0.10), lineWidth: 1)
+                .frame(width: side * 1.14, height: side * 1.14)
+            Circle()
+                .stroke(Color.white.opacity(0.07), lineWidth: 1)
+                .frame(width: side * 1.38, height: side * 1.38)
 
             Image(nsImage: NSApplication.shared.applicationIconImage)
                 .resizable()
                 .interpolation(.high)
-                .frame(width: 112, height: 112)
-                .shadow(color: .black.opacity(0.16), radius: 14, y: 7)
+                .frame(width: side * 0.74, height: side * 0.74)
+                .shadow(color: Color.black.opacity(0.4), radius: 34, y: 18)
 
-            VStack(spacing: 8) {
-                Text(verbatim: "DiskScope")
-                    .font(.system(size: 30, weight: .bold, design: .rounded))
-                Text("app.tagline")
-                    .font(.system(size: 15))
-                    .foregroundStyle(.secondary)
-            }
+            Circle()
+                .fill(Color.white.opacity(0.55))
+                .frame(width: 5, height: 5)
+                .offset(x: side * 0.61, y: -side * 0.42)
 
-            HStack(spacing: 12) {
-                Button {
-                    store.scanFullDisk()
-                } label: {
-                    Label("action.scanDisk", systemImage: "play.fill")
-                        .frame(minWidth: 110)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .keyboardShortcut(.return, modifiers: [])
-
-                Button {
-                    store.chooseFolder()
-                } label: {
-                    Label("action.chooseFolder", systemImage: "folder")
-                        .frame(minWidth: 110)
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.large)
-            }
-
-            if !store.hasFullDiskAccess {
-                HStack(spacing: 12) {
-                    Image(systemName: "lock.shield")
-                        .font(.system(size: 18))
-                        .foregroundStyle(.orange)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("welcome.permission.title")
-                            .font(.system(size: 12, weight: .semibold))
-                        Text("welcome.permission.message")
-                            .font(.system(size: 11))
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer(minLength: 8)
-                    Button("action.grant") {
-                        store.openFullDiskAccessSettings()
-                    }
-                    .controlSize(.small)
-                }
-                .padding(12)
-                .frame(maxWidth: 520)
-                .background(Color.orange.opacity(0.10))
-                .clipShape(RoundedRectangle(cornerRadius: 9))
-            }
-
-            Text("welcome.privacy")
-                .font(.system(size: 11))
-                .foregroundStyle(.tertiary)
-
-            Spacer()
+            Circle()
+                .fill(Color.white.opacity(0.28))
+                .frame(width: 7, height: 7)
+                .offset(x: -side * 0.66, y: side * 0.28)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(30)
+        .frame(width: side * 1.48, height: side * 1.48)
+    }
+
+    private var scanButton: some View {
+        Button {
+            store.scanFullDisk()
+        } label: {
+            ZStack {
+                Circle()
+                    .stroke(Color.white.opacity(0.22), lineWidth: 1)
+                    .frame(width: 122, height: 122)
+
+                Circle()
+                    .fill(Color.white)
+                    .frame(width: 92, height: 92)
+                    .shadow(color: Theme.accent.opacity(0.65), radius: scanHover ? 26 : 16, y: 6)
+
+                VStack(spacing: 3) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 18, weight: .semibold))
+                    Text("action.scan")
+                        .font(.system(size: 12, weight: .bold))
+                }
+                .foregroundStyle(Theme.mid)
+            }
+            .scaleEffect(scanHover ? 1.04 : 1)
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering in
+            withAnimation(.easeOut(duration: 0.16)) { scanHover = hovering }
+        }
+        .help(L10n.t("help.scanDisk"))
     }
 }
 
@@ -152,51 +307,123 @@ private struct WelcomeView: View {
 
 private struct ScanningView: View {
     @EnvironmentObject private var store: ScanStore
+    @State private var spin = false
+
+    private var determinate: Bool {
+        store.scanIsFullDisk && (store.volume?.usedBytes ?? 0) > 0
+    }
+
+    private var fraction: Double {
+        guard determinate, let volume = store.volume, volume.usedBytes > 0 else { return 0 }
+        return min(max(Double(store.live.bytes) / Double(volume.usedBytes), 0.01), 0.99)
+    }
 
     var body: some View {
-        VStack(spacing: 18) {
+        VStack(spacing: 0) {
             Spacer()
 
-            ProgressView()
-                .controlSize(.large)
-
-            Text(L10n.scanTitle(store.lastScanTitle))
-                .font(.system(size: 18, weight: .semibold))
-
-            VStack(spacing: 5) {
-                Text("\(L10n.files(store.live.files)) · \(L10n.folders(store.live.dirs))")
-                    .font(.system(size: 13))
-                    .monospacedDigit()
-                Text(Fmt.bytes(store.live.bytes))
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
+            ZStack {
+                Circle()
+                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                    .frame(width: 220, height: 220)
+                Circle()
+                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
+                    .frame(width: 260, height: 260)
+                Image(nsImage: NSApplication.shared.applicationIconImage)
+                    .resizable()
+                    .interpolation(.high)
+                    .frame(width: 132, height: 132)
+                    .shadow(color: Color.black.opacity(0.35), radius: 26, y: 12)
             }
 
-            if !store.live.currentPath.isEmpty {
+            VStack(spacing: 8) {
+                Text("scan.building")
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .padding(.top, 26)
+
+                Text(store.lastScanTitle)
+                    .font(.system(size: 12.5))
+                    .foregroundStyle(Theme.secondary)
+
                 Text(store.live.currentPath)
-                    .font(.system(size: 10, design: .monospaced))
-                    .foregroundStyle(.tertiary)
+                    .font(.system(size: 9.5, design: .monospaced))
+                    .foregroundStyle(Theme.tertiary)
                     .lineLimit(1)
                     .truncationMode(.middle)
-                    .frame(maxWidth: 520)
+                    .frame(maxWidth: 540)
+                    .padding(.top, 2)
             }
 
-            if let started = store.scanStartedAt {
-                Text(L10n.scanElapsed(Fmt.duration(Date().timeIntervalSince(started))))
-                    .font(.system(size: 11))
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
-            }
+            ZStack {
+                Circle()
+                    .stroke(Color.white.opacity(0.10), lineWidth: 7)
+                    .frame(width: 172, height: 172)
 
-            Button("action.stopScan") {
-                store.cancel()
+                Circle()
+                    .trim(from: 0, to: determinate ? fraction : 0.72)
+                    .stroke(
+                        AngularGradient(
+                            colors: [Theme.accent, Color.white, Theme.accent],
+                            center: .center
+                        ),
+                        style: StrokeStyle(lineWidth: 7, lineCap: .round)
+                    )
+                    .frame(width: 172, height: 172)
+                    .rotationEffect(.degrees(determinate ? -90 : (spin ? 270 : -90)))
+
+                Button {
+                    store.cancel()
+                } label: {
+                    VStack(spacing: 2) {
+                        Image(systemName: "stop.fill")
+                            .font(.system(size: 13))
+                        Text("action.stop")
+                            .font(.system(size: 11, weight: .semibold))
+                    }
+                    .foregroundStyle(.white)
+                    .frame(width: 118, height: 118)
+                    .background(Circle().fill(.ultraThinMaterial))
+                    .overlay(Circle().stroke(Color.white.opacity(0.16), lineWidth: 1))
+                }
+                .buttonStyle(.plain)
             }
-            .controlSize(.regular)
+            .padding(.top, 26)
+
+            VStack(spacing: 6) {
+                HStack(spacing: 8) {
+                    Text(L10n.files(store.live.files))
+                    Text(verbatim: "·")
+                    Text(L10n.folders(store.live.dirs))
+                    Text(verbatim: "·")
+                    Text(Fmt.bytes(store.live.bytes))
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                }
+                .font(.system(size: 12))
+                .foregroundStyle(Theme.secondary)
+                .monospacedDigit()
+
+                if determinate {
+                    Text(Fmt.percent(fraction))
+                        .font(.system(size: 10))
+                        .foregroundStyle(Theme.tertiary)
+                        .monospacedDigit()
+                } else if let started = store.scanStartedAt {
+                    Text(L10n.scanElapsed(Fmt.duration(Date().timeIntervalSince(started))))
+                        .font(.system(size: 10))
+                        .foregroundStyle(Theme.tertiary)
+                        .monospacedDigit()
+                }
+            }
+            .padding(.top, 18)
 
             Spacer()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear {
+            withAnimation(.linear(duration: 1.5).repeatForever(autoreverses: false)) {
+                spin = true
+            }
+        }
     }
 }
 
@@ -205,377 +432,250 @@ private struct ScanningView: View {
 private struct ResultsView: View {
     @EnvironmentObject private var store: ScanStore
     @State private var tab = ProcessInfo.processInfo.arguments.contains("--tab-bigfiles") ? 1 : 0
+    @State private var selectedID: String?
+
+    private var entries: [LensEntry] {
+        LensEntry.make(from: store.current)
+    }
+
+    private var selectedEntry: LensEntry? {
+        entries.first { $0.id == selectedID }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
+            topBar
+
             if !store.hasFullDiskAccess {
-                PermissionBanner(
-                    deniedCount: store.permissionDenied,
-                    hasAccess: store.hasFullDiskAccess,
-                    onOpenSettings: { store.openFullDiskAccessSettings() }
-                )
+                permissionStrip
             }
-
-            HStack {
-                Picker("", selection: $tab) {
-                    Text("tab.directory").tag(0)
-                    Text("tab.bigFiles").tag(1)
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .frame(width: 180)
-
-                Spacer()
-
-                if let summary = store.summary {
-                    Text(L10n.scanTotal(Fmt.bytes(summary.totalBytes)))
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundStyle(.secondary)
-                        .monospacedDigit()
-                        .help(L10n.t("help.scanTotal"))
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 9)
-
-            Divider()
 
             if tab == 0 {
-                DirectoryBrowser()
+                LensBrowser(
+                    entries: entries,
+                    selectedID: $selectedID,
+                    onEnter: activate
+                )
             } else {
                 BigFilesView()
             }
+
+            bottomBar
         }
-    }
-}
-
-// MARK: - Directory browser
-
-private enum BrowserEntry: Identifiable {
-    case directory(DirNode)
-    case file(FileItem)
-    case smallFiles(count: Int, bytes: Int64)
-    case overflowDirectories(count: Int, bytes: Int64)
-
-    var id: String {
-        switch self {
-        case .directory(let node):
-            return "d-\(ObjectIdentifier(node))"
-        case .file(let item):
-            return "f-\(item.id.uuidString)"
-        case .smallFiles:
-            return "small"
-        case .overflowDirectories:
-            return "overflow"
+        .onAppear {
+            selectedID = entries.first?.id
+        }
+        .onChange(of: store.current?.id) { _, _ in
+            selectedID = entries.first?.id
         }
     }
 
-    var bytes: Int64 {
-        switch self {
-        case .directory(let node): return node.totalBytes
-        case .file(let item): return item.size
-        case .smallFiles(_, let bytes): return bytes
-        case .overflowDirectories(_, let bytes): return bytes
-        }
-    }
-}
-
-struct DirectoryBrowser: View {
-    @EnvironmentObject private var store: ScanStore
-    @State private var sortKey: SortKey = .size
-    @State private var ascending = false
-
-    private var node: DirNode? { store.current }
-
-    var body: some View {
+    private var topBar: some View {
         VStack(spacing: 0) {
-            breadcrumb
-            columnHeader
-            Divider()
-
-            if let node, node.children.isEmpty, node.files.isEmpty, node.smallCount == 0 {
-                EmptyHint(
-                    icon: node.denied ? "lock" : "tray",
-                    title: L10n.t(node.denied ? "dir.denied.title" : "dir.empty.title"),
-                    message: L10n.t(node.denied ? "dir.denied.message" : "dir.empty.message")
-                )
-            } else {
-                ScrollView {
-                    LazyVStack(spacing: 0) {
-                        ForEach(entries) { entry in
-                            BrowserRow(
-                                entry: entry,
-                                total: max(node?.totalBytes ?? 1, 1),
-                                onActivate: activate
-                            )
+            ZStack {
+                HStack {
+                    Button {
+                        store.go(to: 0)
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 10, weight: .semibold))
+                            Text("lens.restart")
+                                .font(.system(size: 11.5, weight: .medium))
                         }
+                        .foregroundStyle(.white.opacity(0.9))
+                        .padding(.horizontal, 11)
+                        .padding(.vertical, 6)
+                        .background(Capsule().fill(Color.white.opacity(0.07)))
+                        .overlay(Capsule().stroke(Theme.hairline, lineWidth: 1))
                     }
-                    .padding(.bottom, 12)
+                    .buttonStyle(.plain)
+                    .help(L10n.t("help.restart"))
+
+                    Spacer()
+
+                    Button {
+                        store.rescan()
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.85))
+                            .frame(width: 28, height: 28)
+                            .background(Circle().fill(Color.white.opacity(0.07)))
+                            .overlay(Circle().stroke(Theme.hairline, lineWidth: 1))
+                    }
+                    .buttonStyle(.plain)
+                    .help(L10n.t("help.rescan"))
                 }
-                .defaultScrollAnchor(.top)
-                .id(node?.id)
+
+                Text("lens.title")
+                    .font(.system(size: 11.5, weight: .semibold))
+                    .foregroundStyle(Theme.secondary)
             }
+            .padding(.horizontal, 24)
+            .padding(.top, 28)
+            .frame(height: 56)
+
+            HStack(spacing: 9) {
+                Button {
+                    store.goUp()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(store.current?.parent == nil ? Theme.tertiary : .white.opacity(0.8))
+                        .frame(width: 22, height: 22)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .disabled(store.current?.parent == nil)
+                .help(L10n.t("help.back"))
+
+                breadcrumb
+
+                Spacer(minLength: 8)
+
+                ViewSwitcher(selection: $tab)
+            }
+            .padding(.horizontal, 24)
+            .frame(height: 38)
         }
     }
 
     private var breadcrumb: some View {
         HStack(spacing: 6) {
-            Button {
-                store.goUp()
-            } label: {
-                Image(systemName: "chevron.up")
-                    .font(.system(size: 11, weight: .semibold))
-            }
-            .buttonStyle(.borderless)
-            .disabled(node?.parent == nil)
-            .help(L10n.t("help.up"))
+            Image(systemName: "internaldrive")
+                .font(.system(size: 9.5))
+                .foregroundStyle(Theme.secondary)
 
             ForEach(store.breadcrumb.indices, id: \.self) { index in
                 if index > 0 {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 8, weight: .semibold))
-                        .foregroundStyle(.tertiary)
+                        .font(.system(size: 7, weight: .bold))
+                        .foregroundStyle(Theme.tertiary)
                 }
-                let item = store.breadcrumb[index]
+
+                let node = store.breadcrumb[index]
                 Button {
                     store.go(to: index)
                 } label: {
-                    Text(item.displayName)
-                        .font(.system(size: 12, weight: index == store.breadcrumb.count - 1 ? .semibold : .regular))
-                        .foregroundStyle(index == store.breadcrumb.count - 1 ? .primary : .secondary)
+                    Text(node.displayName)
+                        .font(.system(size: 11, weight: index == store.breadcrumb.count - 1 ? .semibold : .regular))
+                        .foregroundStyle(index == store.breadcrumb.count - 1 ? Color.white : Theme.secondary)
+                        .lineLimit(1)
                 }
                 .buttonStyle(.plain)
             }
-
-            Spacer()
-
-            if let node {
-                Text("\(L10n.files(node.fileCount)) · \(Fmt.bytes(node.totalBytes))")
-                    .font(.system(size: 11))
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
-            }
         }
-        .padding(.horizontal, 20)
-        .frame(height: 38)
-    }
-
-    private var columnHeader: some View {
-        HStack(spacing: 12) {
-            sortButton(L10n.t("column.name"), key: .name)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            Spacer(minLength: 0)
-
-            sortButton(L10n.t("column.size"), key: .size)
-                .frame(width: 92, alignment: .trailing)
-
-            Text("column.share")
-                .frame(width: 150, alignment: .trailing)
-        }
-        .font(.system(size: 11, weight: .medium))
-        .foregroundStyle(.secondary)
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 10)
         .frame(height: 26)
+        .background(Capsule().fill(Color.white.opacity(0.06)))
+        .overlay(Capsule().stroke(Theme.hairline, lineWidth: 1))
     }
 
-    private func sortButton(_ title: String, key: SortKey) -> some View {
-        Button {
-            if sortKey == key {
-                ascending.toggle()
-            } else {
-                sortKey = key
-                ascending = key == .name
+    private var permissionStrip: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "lock.shield")
+                .font(.system(size: 11))
+                .foregroundStyle(Theme.warm)
+            Text("permission.title.denied")
+                .font(.system(size: 10.5))
+                .foregroundStyle(.white.opacity(0.8))
+            Spacer()
+            Button {
+                store.openFullDiskAccessSettings()
+            } label: {
+                Text("action.grant")
+                    .font(.system(size: 10, weight: .semibold))
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 4)
+                    .background(Capsule().fill(Color.white.opacity(0.12)))
             }
-        } label: {
-            HStack(spacing: 3) {
-                Text(title)
-                if sortKey == key {
-                    Image(systemName: ascending ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 8, weight: .bold))
-                }
-            }
-            .contentShape(Rectangle())
+            .buttonStyle(.plain)
         }
-        .buttonStyle(.plain)
+        .padding(.horizontal, 24)
+        .frame(height: 34)
+        .background(Color.orange.opacity(0.10))
     }
 
-    private var entries: [BrowserEntry] {
-        guard let node else { return [] }
-
-        var directories = node.children
-        var files = node.files
-
-        if sortKey == .name {
-            directories.sort {
-                $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending
-            }
-            files.sort {
-                $0.name.localizedStandardCompare($1.name) == .orderedAscending
-            }
-        } else {
-            directories.sort { $0.totalBytes > $1.totalBytes }
-            files.sort { $0.size > $1.size }
-        }
-
-        if ascending {
-            directories.reverse()
-            files.reverse()
-        }
-
-        var result: [BrowserEntry] = []
-        let shownDirectories = min(directories.count, 500)
-        result.append(contentsOf: directories.prefix(shownDirectories).map { .directory($0) })
-        if directories.count > shownDirectories {
-            let rest = directories.dropFirst(shownDirectories)
-            result.append(.overflowDirectories(
-                count: rest.count,
-                bytes: rest.reduce(Int64(0)) { $0 + $1.totalBytes }
-            ))
-        }
-
-        result.append(contentsOf: files.map { .file($0) })
-        if node.smallCount > 0 {
-            result.append(.smallFiles(count: node.smallCount, bytes: node.smallBytes))
-        }
-        return result
-    }
-
-    private func activate(_ entry: BrowserEntry) {
-        switch entry {
-        case .directory(let node):
-            store.enter(node)
-        case .file(let item):
-            store.reveal(item.path)
-        case .smallFiles, .overflowDirectories:
-            break
-        }
-    }
-}
-
-private struct BrowserRow: View {
-    let entry: BrowserEntry
-    let total: Int64
-    let onActivate: (BrowserEntry) -> Void
-
-    @State private var hovering = false
-
-    private var fraction: Double {
-        Double(entry.bytes) / Double(max(total, 1))
-    }
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: iconName)
-                .font(.system(size: 14))
-                .foregroundStyle(iconColor)
-                .frame(width: 20)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.system(size: 12.5, weight: isDirectory ? .medium : .regular))
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                Text(subtitle)
-                    .font(.system(size: 10))
-                    .foregroundStyle(.tertiary)
-                    .lineLimit(1)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            Text(Fmt.bytes(entry.bytes))
-                .font(.system(size: 12, weight: .medium))
-                .monospacedDigit()
-                .frame(width: 92, alignment: .trailing)
-
+    private var bottomBar: some View {
+        ZStack {
             HStack(spacing: 8) {
-                ShareBar(fraction: fraction)
-                    .frame(width: 80)
-                Text(Fmt.percent(fraction))
-                    .font(.system(size: 11))
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
-                    .frame(width: 52, alignment: .trailing)
-            }
-            .frame(width: 150, alignment: .trailing)
-        }
-        .padding(.horizontal, 20)
-        .frame(height: 46)
-        .background(hovering ? Color.primary.opacity(0.045) : Color.clear)
-        .overlay(alignment: .bottom) {
-            Divider().opacity(0.22)
-        }
-        .contentShape(Rectangle())
-        .onHover { hovering = $0 }
-        .onTapGesture { onActivate(entry) }
-        .contextMenu {
-            switch entry {
-            case .directory(let node):
-                Button(L10n.t("action.open")) { onActivate(entry) }
-                Button(L10n.t("action.reveal")) {
-                    NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: node.path)])
+                if let summary = store.summary {
+                    HStack(spacing: 6) {
+                        Text(L10n.filesFoldersBytes(summary.fileCount, summary.dirCount, Fmt.bytes(summary.totalBytes)))
+                            .lineLimit(1)
+                        Text(verbatim: "·")
+                        Text(L10n.format("status.duration", Fmt.duration(summary.duration)))
+                            .lineLimit(1)
+                    }
+                    .frame(maxWidth: 440, alignment: .leading)
+
+                    Spacer(minLength: 12)
+
+                    if summary.deniedCount > 0 {
+                        Label(
+                            store.hasFullDiskAccess
+                                ? L10n.deniedSystem(summary.deniedCount)
+                                : L10n.deniedAccess(summary.deniedCount),
+                            systemImage: "lock"
+                        )
+                        .lineLimit(1)
+                        .help(store.hasFullDiskAccess
+                              ? L10n.t("status.deniedSystem.help")
+                              : L10n.t("status.deniedAccess.help"))
+                    }
                 }
-            case .file(let item):
-                Button(L10n.t("action.reveal")) {
-                    NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: item.path)])
-                }
-            case .smallFiles, .overflowDirectories:
-                EmptyView()
+            }
+            .font(.system(size: 10))
+            .foregroundStyle(Theme.tertiary)
+            .monospacedDigit()
+            .padding(.horizontal, 24)
+
+            if tab == 0 {
+                actionButton
             }
         }
-        .help(helpText)
+        .frame(height: 86)
     }
 
-    private var isDirectory: Bool {
-        if case .directory = entry { return true }
-        return false
-    }
-
-    private var title: String {
-        switch entry {
-        case .directory(let node): return node.displayName
-        case .file(let item): return item.name
-        case .smallFiles(let count, _): return L10n.smallerFiles(count)
-        case .overflowDirectories(let count, _): return L10n.remainingFolders(count)
+    @ViewBuilder
+    private var actionButton: some View {
+        if let entry = selectedEntry {
+            Button {
+                activate(entry)
+            } label: {
+                VStack(spacing: 4) {
+                    Image(systemName: entry.isDirectory ? "folder.fill" : "arrow.up.forward.app")
+                        .font(.system(size: 16, weight: .medium))
+                    Text(L10n.t(entry.isDirectory ? "lens.open" : "lens.reveal"))
+                        .font(.system(size: 10, weight: .semibold))
+                }
+                .foregroundStyle(.white)
+                .frame(width: 68, height: 68)
+                .background(Circle().fill(.ultraThinMaterial))
+                .overlay(Circle().stroke(Color.white.opacity(0.22), lineWidth: 1))
+                .shadow(color: Theme.accent.opacity(0.35), radius: 18, y: 6)
+            }
+            .buttonStyle(.plain)
+        } else {
+            VStack(spacing: 3) {
+                Image(systemName: "cursorarrow")
+                    .font(.system(size: 13))
+                Text("lens.select")
+                    .font(.system(size: 9))
+            }
+            .foregroundStyle(Theme.tertiary)
+            .frame(width: 68, height: 68)
+            .background(Circle().fill(Color.white.opacity(0.05)))
+            .overlay(Circle().stroke(Color.white.opacity(0.10), lineWidth: 1))
         }
     }
 
-    private var subtitle: String {
-        switch entry {
-        case .directory(let node):
-            return L10n.filesFolders(node.fileCount, node.dirCount)
-        case .file(let item):
-            return item.fileExtension
-        case .smallFiles:
-            return L10n.t("dir.belowOneMB")
-        case .overflowDirectories:
-            return L10n.t("dir.notShown")
-        }
-    }
-
-    private var iconName: String {
-        switch entry {
-        case .directory: return "folder.fill"
-        case .file: return "doc.fill"
-        case .smallFiles: return "doc.on.doc"
-        case .overflowDirectories: return "ellipsis.circle"
-        }
-    }
-
-    private var iconColor: Color {
-        switch entry {
-        case .directory: return Color(red: 0.29, green: 0.60, blue: 0.98)
-        case .file: return .secondary
-        case .smallFiles: return Color.secondary.opacity(0.7)
-        case .overflowDirectories: return Color.secondary.opacity(0.7)
-        }
-    }
-
-    private var helpText: String {
-        switch entry {
-        case .directory(let node): return node.path
-        case .file(let item): return item.path
-        case .smallFiles, .overflowDirectories: return ""
+    private func activate(_ entry: LensEntry) {
+        if let node = entry.directory {
+            store.enter(node)
+        } else if let file = entry.file {
+            store.reveal(file.path)
         }
     }
 }
